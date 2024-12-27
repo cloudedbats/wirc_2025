@@ -9,6 +9,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_bloc:
+  equatable:
+  path_provider:
+  shared_preferences:
+  package_info_plus:
+  http:
+  flutter_mjpeg:
+  
+  # # For test.
+  # camera:
+  # video_player:
+  # flutter_hooks: # Used in flutter_mjpeg.
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +29,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/icons/
