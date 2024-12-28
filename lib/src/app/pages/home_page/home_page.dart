@@ -85,9 +85,9 @@ class _HomePageState extends State<HomePage> {
           ]),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
-        selectedItemColor: Colors.blueGrey.shade200,
-        unselectedItemColor: Colors.blueGrey.shade100,
-        showUnselectedLabels: true,
+        selectedIconTheme: Theme.of(context).iconTheme,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Theme.of(context).colorScheme.secondary,
         onTap: (value) {
           setState(() {
             selectedIndex = value;
@@ -97,18 +97,22 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.preview),
             label: 'Preview',
+            tooltip: 'Preview',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.videocam),
             label: 'Videos',
+            tooltip: 'Videos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_camera),
             label: 'Images',
+            tooltip: 'Images',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.tune),
             label: 'Settings',
+            tooltip: 'Settings',
           ),
         ],
       ),
@@ -162,6 +166,7 @@ class _HomePageState extends State<HomePage> {
       body: Row(
         children: [
           NavigationRail(
+              selectedIconTheme: Theme.of(context).iconTheme,
               extended: constraints.maxWidth >= 1000,
               destinations: const [
                 NavigationRailDestination(
