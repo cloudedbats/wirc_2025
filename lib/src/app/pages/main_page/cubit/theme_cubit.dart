@@ -11,9 +11,9 @@ class ThemeCubit extends Cubit<ThemeState> {
   static final ThemeData _lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blueGrey,
+      seedColor: Colors.indigoAccent,
       brightness: Brightness.light,
-      surface: Colors.grey.shade500,
+      surface: Colors.grey.shade400,
       error: Colors.red,
     ),
     textTheme: const TextTheme(
@@ -26,9 +26,9 @@ class ThemeCubit extends Cubit<ThemeState> {
   static final ThemeData _darkTheme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blueGrey,
+      seedColor: Colors.indigoAccent,
       brightness: Brightness.dark,
-      surface: Colors.blueGrey.shade900,
+      surface: Colors.grey.shade800,
       error: Colors.red,
     ),
     textTheme: const TextTheme(
