@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/core.dart' as core;
+// import '../../../core/core.dart' as core;
 
 class VideoWidget extends StatefulWidget {
   const VideoWidget({

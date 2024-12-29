@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         userSelectedPage = const VideoWidget();
         break;
       case 2:
-        userSelectedPage = const CameraWidget();
+        userSelectedPage = const ImageWidget();
         break;
       case 3:
         userSelectedPage = const SettingsWidget();
