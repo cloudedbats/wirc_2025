@@ -1,6 +1,7 @@
 // import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
-import 'package:wirc_2025/src/core/core.dart' as core;
+// import 'package:wirc_2025/src/core/core.dart' as core;
+import 'package:wirc_2025/src/data/data.dart' as data;
 
 startCamera() async {
   await cameraCommands('start');
@@ -15,7 +16,7 @@ restartCamera() async {
 }
 
 String getStreamVideoUri() {
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -26,7 +27,7 @@ String getStreamVideoUri() {
 }
 
 Future<void> recordVideo() async {
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -42,7 +43,7 @@ Future<void> recordVideo() async {
 }
 
 Future<void> saveJpeg() async {
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -59,7 +60,7 @@ Future<void> saveJpeg() async {
 
 Future<void> setSaturation({double saturation = 0.0}) async {
   var queryParameters = {'saturation': saturation.toString()};
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -69,13 +70,13 @@ Future<void> setSaturation({double saturation = 0.0}) async {
   );
   var response = await http.post(uri);
   if (response.statusCode != 200) {
-    print('ERROR');
+    print('ERROR: setSaturation.');
   }
 }
 
 Future<void> setExposureTime({int exposureTime = 0}) async {
   var queryParameters = {'time_us': exposureTime.toString()};
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -85,13 +86,13 @@ Future<void> setExposureTime({int exposureTime = 0}) async {
   );
   var response = await http.post(uri);
   if (response.statusCode != 200) {
-    print('ERROR');
+    print('ERROR: setExposureTime.');
   }
 }
 
 Future<void> setAnalogueGain({double analogueGain = 0.0}) async {
   var queryParameters = {'analogue_gain': analogueGain.toString()};
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -101,13 +102,13 @@ Future<void> setAnalogueGain({double analogueGain = 0.0}) async {
   );
   var response = await http.post(uri);
   if (response.statusCode != 200) {
-    print('ERROR');
+    print('ERROR: setAnalogueGain.');
   }
 }
 
 Future<void> cameraCommands(String command) async {
   var queryParameters = {'command': command};
-  var settings = core.serverSettings();
+  var settings = data.serverSettings();
   var uri = Uri(
     scheme: settings['scheme'] ?? 'http',
     host: settings['host'],
@@ -117,6 +118,6 @@ Future<void> cameraCommands(String command) async {
   );
   var response = await http.post(uri);
   if (response.statusCode != 200) {
-    print('ERROR');
+    print('ERROR: cameraCommands.');
   }
 }
