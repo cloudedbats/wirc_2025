@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubit/theme_cubit.dart';
-// import 'cubit/data_cubit.dart';
+import 'cubit/client_settings_cubit.dart';
+import 'cubit/settings_cubit.dart';
+import 'cubit/video_dirs_cubit.dart';
+import 'cubit/video_files_cubit.dart';
+import 'cubit/image_dirs_cubit.dart';
+import 'cubit/image_files_cubit.dart';
 import '../home_page/home_page.dart';
-// import '../by_country_page/cubit/by_country_cubit.dart';
-// import '../bats_page/cubit/bats_cubit.dart';
-// import '../countries_page/cubit/countries_cubit.dart';
 
 void startApp() {
   runApp(MultiBlocProvider(
@@ -14,22 +16,30 @@ void startApp() {
         lazy: false,
         create: (context) => ThemeCubit()..loadInitialTheme(),
       ),
-      // BlocProvider<ByCountryCubit>(
-      //   lazy: false,
-      //   create: (context) => ByCountryCubit()..loadInitialByCountry(),
-      // ),
-      // BlocProvider<CountriesCubit>(
-      //   lazy: false,
-      //   create: (context) => CountriesCubit()..loadInitialCountry(),
-      // ),
-      // BlocProvider<BatsCubit>(
-      //   lazy: false,
-      //   create: (context) => BatsCubit()..loadInitialBats(),
-      // ),
-      // BlocProvider<DataCubit>(
-      //   lazy: true,
-      //   create: (context) => DataCubit()..loadData(),
-      // ),
+      BlocProvider<ClientSettingsCubit>(
+        lazy: false,
+        create: (context) => ClientSettingsCubit()..loadInitialClientSettings(),
+      ),
+      BlocProvider<SettingsCubit>(
+        lazy: true,
+        create: (context) => SettingsCubit()..loadInitialSettings(),
+      ),
+      BlocProvider<VideoDirsCubit>(
+        lazy: true,
+        create: (context) => VideoDirsCubit()..loadInitialVideoDirs(),
+      ),
+      BlocProvider<VideoFilesCubit>(
+        lazy: true,
+        create: (context) => VideoFilesCubit()..loadInitialVideoFiles(),
+      ),
+      BlocProvider<ImageDirsCubit>(
+        lazy: true,
+        create: (context) => ImageDirsCubit()..loadInitialImageDirs(),
+      ),
+      BlocProvider<ImageFilesCubit>(
+        lazy: true,
+        create: (context) => ImageFilesCubit()..loadInitialImageFiles(),
+      ),
     ],
     child: _MainApp(),
   ));
