@@ -16,11 +16,16 @@ dependencies:
   package_info_plus:
   http:
   flutter_mjpeg:
-  
-  # # For test.
-  # camera:
-  # video_player:
-  # flutter_hooks: # Used in flutter_mjpeg.
+
+  media_kit:
+  media_kit_video:
+  media_kit_libs_video:
+  media_kit_libs_audio:
+  # media_kit_libs_android_video:
+  # media_kit_libs_ios_video:
+  # media_kit_libs_macos_video:
+  media_kit_libs_windows_video:
+  # media_kit_libs_linux:
 
 dev_dependencies:
   flutter_test:
