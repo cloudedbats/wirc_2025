@@ -122,7 +122,10 @@ class _ImagesWidgetState extends State<ImagesWidget> {
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        return true;
+        if (current.imageFilesResult.status == ImageFilesStatus.success) {
+          return true;
+        }
+        return false;
       },
       builder: (context, state) {
         print('Image builder: ${state.imageFilesResult.status.name}');
@@ -146,7 +149,10 @@ class _ImagesWidgetState extends State<ImagesWidget> {
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        return true;
+        if (current.imageFilesResult.status == ImageFilesStatus.success) {
+          return true;
+        }
+        return false;
       },
       builder: (context, state) {
         print('Directory builder: ${state.imageFilesResult.status.name}');
@@ -190,7 +196,10 @@ class _ImagesWidgetState extends State<ImagesWidget> {
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        return true;
+        if (current.imageFilesResult.status == ImageFilesStatus.success) {
+          return true;
+        }
+        return false;
       },
       builder: (context, state) {
         print('Filelist builder: ${state.imageFilesResult.status.name}');
@@ -198,13 +207,25 @@ class _ImagesWidgetState extends State<ImagesWidget> {
           var fileList = data.imageFileNames;
           return ListView.builder(
             itemCount: fileList.length,
-            itemBuilder: (context, index) => Card(
+            itemBuilder: (context, index) => Container(
               child: ListTile(
-                title: Text(fileList[index]),
-                // trailing: Text(fileList[index].countryCode),
-                trailing: Text(
-                  '${index + 1} (${fileList.length})',
-                  // '${fileList[index]}\n${index + 1} (${fileList.length})',
+                // selected: 
+                //   state.imageFilesResult.selectedFile == fileList[index],
+                title: Text(
+                  fileList[index],
+                  style: state.imageFilesResult.selectedFile == fileList[index]
+                      ? TextStyle(fontWeight: FontWeight.bold)
+                      : TextStyle(fontWeight: FontWeight.normal),
+                ),
+                trailing: Wrap(
+                  spacing: 10.0,
+                  children: [
+                    Icon(Icons.download),
+                    Icon(Icons.delete),
+                    Text(
+                      '${index + 1} (${fileList.length})',
+                    ),
+                  ],
                 ),
                 onTap: () async {
                   BlocProvider.of<ImageFilesCubit>(context)
