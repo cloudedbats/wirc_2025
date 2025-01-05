@@ -1,6 +1,8 @@
+// List<ImageDir> imageDirectories = [];
 List<String> imageDirNames = [];
 Map<String, ImageDir> imageDirByName = {};
 
+// List<ImageFile> imageFiles = [];
 List<String> imageFileNames = [];
 Map<String, ImageFile> imageFileByName = {};
 
@@ -36,37 +38,31 @@ void clearImageFiles() {
 
 void addImageDirs(Map imageDirMap) {
   clearImageDirs();
-  for (String imageDirName in imageDirMap.keys) {
-    imageDirNames.add(imageDirName);
+  for (String imageDirName in imageDirMap.keys.toList()..sort()) {
     var imageDir = ImageDir(
-        imageDirName: imageDirName, imageDirPath: imageDirMap[imageDirName]);
+      imageDirName: imageDirName,
+      imageDirPath: imageDirMap[imageDirName],
+    );
+    // imageDirectories.add(imageDir);
+    imageDirNames.add(imageDirName);
     imageDirByName[imageDirName] = imageDir;
   }
-  sortImageDirNames();
 }
 
 void addImageFiles(Map fileMap) {
   clearImageFiles();
-  for (String fileName in fileMap.keys) {
-    imageFileNames.add(fileName);
-    var file =
+  for (String fileName in fileMap.keys.toList()..sort()) {
+    var imageFile =
         ImageFile(imageFileName: fileName, imageFilePath: fileMap[fileName]);
-    imageFileByName[fileName] = file;
+    // imageFiles.add(imageFile);
+    imageFileNames.add(fileName);
+    imageFileByName[fileName] = imageFile;
   }
-  sortImageFileNames();
 }
 
-void sortImageDirNames() {
-  imageDirNames.sort((a, b) => a.compareTo(b));
-}
-
-void sortImageFileNames() {
-  imageFileNames.sort((a, b) => a.compareTo(b));
-}
-
-Future<List<String>> filterImageFilesByString(String filterString) async {
-  List<String> filteredList = imageFileNames
-      .where((a) => a.toLowerCase().contains(filterString.toLowerCase()))
-      .toList();
-  return filteredList;
-}
+// Future<List<String>> filterImageFilesByString(String filterString) async {
+//   List<String> filteredList = imageFileNames
+//       .where((a) => a.toLowerCase().contains(filterString.toLowerCase()))
+//       .toList();
+//   return filteredList;
+// }

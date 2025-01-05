@@ -62,7 +62,7 @@ class VideoFilesCubit extends Cubit<VideoFilesState> {
     // Filtering based on selectedFile.
     try {
       late List<String> availableVideoFiles;
-      await core.getFiles(directory, media: 'video');
+      await core.downloadFiles(directory, media: 'video');
       data.sortVideoFileNames();
       availableVideoFiles = data.videoFileNames; // Inform consumers.
       result = VideoFilesResult();

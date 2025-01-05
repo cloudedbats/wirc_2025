@@ -5,7 +5,6 @@ import 'cubit/client_settings_cubit.dart';
 import 'cubit/settings_cubit.dart';
 import 'cubit/video_dirs_cubit.dart';
 import 'cubit/video_files_cubit.dart';
-import 'cubit/image_dirs_cubit.dart';
 import 'cubit/image_files_cubit.dart';
 import '../home_page/home_page.dart';
 
@@ -31,10 +30,6 @@ void startApp() {
       BlocProvider<VideoFilesCubit>(
         lazy: true,
         create: (context) => VideoFilesCubit()..loadInitialVideoFiles(),
-      ),
-      BlocProvider<ImageDirsCubit>(
-        lazy: true,
-        create: (context) => ImageDirsCubit()..loadInitialImageDirs(),
       ),
       BlocProvider<ImageFilesCubit>(
         lazy: true,

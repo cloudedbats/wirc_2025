@@ -52,7 +52,7 @@ class VideoDirsCubit extends Cubit<VideoDirsState> {
     // Filtering based on filterString.
     try {
       late List<String> availableVideoDirs;
-      await core.getDirectories(media: 'video');
+      await core.downloadDirectories(media: 'video');
       data.sortVideoDirNames();
       availableVideoDirs = data.videoDirNames;
       // Inform consumers.

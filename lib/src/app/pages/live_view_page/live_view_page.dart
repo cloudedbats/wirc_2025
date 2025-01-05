@@ -38,6 +38,7 @@ class _LiveViewWidgetState extends State<LiveViewWidget> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Wrap(
+                    spacing: 10.0,
                     children: <Widget>[
                       ElevatedButton(
                         onPressed: () {
@@ -47,21 +48,18 @@ class _LiveViewWidgetState extends State<LiveViewWidget> {
                         },
                         child: const Text('On/off'),
                       ),
-                      const Text(' '),
                       ElevatedButton(
                         onPressed: () async {
                           core.recordVideo();
                         },
                         child: const Text('Video'),
                       ),
-                      const Text(' '),
                       ElevatedButton(
                         onPressed: () async {
                           core.saveJpeg();
                         },
                         child: const Text('Image'),
                       ),
-                      const Text(' '),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
