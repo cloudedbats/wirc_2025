@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/client_settings_cubit.dart';
 import 'cubit/settings_cubit.dart';
-import 'cubit/video_dirs_cubit.dart';
 import 'cubit/video_files_cubit.dart';
 import 'cubit/image_files_cubit.dart';
 import '../home_page/home_page.dart';
@@ -22,10 +21,6 @@ void startApp() {
       BlocProvider<SettingsCubit>(
         lazy: true,
         create: (context) => SettingsCubit()..loadInitialSettings(),
-      ),
-      BlocProvider<VideoDirsCubit>(
-        lazy: true,
-        create: (context) => VideoDirsCubit()..loadInitialVideoDirs(),
       ),
       BlocProvider<VideoFilesCubit>(
         lazy: true,

@@ -21,6 +21,9 @@ class _ImagesWidgetState extends State<ImagesWidget> {
   void initState() {
     super.initState();
     BlocProvider.of<ImageFilesCubit>(context).updateImageFiles(isDirty: true);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   BlocProvider.of<ImageFilesCubit>(context).updateImageFiles(isDirty: true);
+    // });
   }
 
   @override
@@ -128,7 +131,7 @@ class _ImagesWidgetState extends State<ImagesWidget> {
         return false;
       },
       builder: (context, state) {
-        print('Image builder: ${state.imageFilesResult.status.name}');
+        print('Image showImage: ${state.imageFilesResult.status.name}');
         if (state.imageFilesResult.status == ImageFilesStatus.success) {
           var imageUri = state.imageFilesResult.imageUri;
           if (imageUri == '') {
@@ -155,7 +158,7 @@ class _ImagesWidgetState extends State<ImagesWidget> {
         return false;
       },
       builder: (context, state) {
-        print('Directory builder: ${state.imageFilesResult.status.name}');
+        print('Image directoryListBuilder: ${state.imageFilesResult.status.name}');
         if (state.imageFilesResult.status == ImageFilesStatus.success) {
           var directoryList = data.imageDirNames;
 
@@ -202,14 +205,14 @@ class _ImagesWidgetState extends State<ImagesWidget> {
         return false;
       },
       builder: (context, state) {
-        print('Filelist builder: ${state.imageFilesResult.status.name}');
+        print('Image fileListBuilder: ${state.imageFilesResult.status.name}');
         if (state.imageFilesResult.status == ImageFilesStatus.success) {
           var fileList = data.imageFileNames;
           return ListView.builder(
             itemCount: fileList.length,
             itemBuilder: (context, index) => Container(
               child: ListTile(
-                // selected: 
+                // selected:
                 //   state.imageFilesResult.selectedFile == fileList[index],
                 title: Text(
                   fileList[index],

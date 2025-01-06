@@ -1,14 +1,11 @@
 import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:media_kit/media_kit.dart' as media_kit;
 import 'package:media_kit_video/media_kit_video.dart' as media_kit_video;
-import 'package:wirc_2025/src/app/pages/main_page/cubit/video_dirs_cubit.dart';
 import 'package:wirc_2025/src/app/pages/main_page/cubit/video_files_cubit.dart';
-// import 'package:wirc_2025/src/data/data.dart' as data;
-import 'package:wirc_2025/src/core/core.dart' as core;
+import 'package:wirc_2025/src/data/data.dart' as data;
 
 class VideosWidget extends StatefulWidget {
   const VideosWidget({
@@ -20,84 +17,150 @@ class VideosWidget extends StatefulWidget {
 }
 
 class _VideosWidgetState extends State<VideosWidget> {
-  var isRunning = true;
+  // String? selectedDirectory;
+  // String? selectedFile;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<VideoFilesCubit>(context).updateVideoFiles(isDirty: true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          // showVideo(),
-          MyScreen(),
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth < 600) {
+        return narrowScreen(context);
+      } else {
+        return wideScreen(context);
+      }
+    });
+  }
 
-          Wrap(
-            spacing: 10.0,
+  Widget narrowScreen(context) {
+    return Column(
+      children: [
+        ConstrainedBox(
+          constraints:
+              BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 2),
+          child: videoPane(context),
+        ),
+        Expanded(
+          child: Column(
             children: [
+              selectPane(context),
               Expanded(
-                child: directoryListBuilder(),
-              ),
-              ElevatedButton(
-                child: Text('Update'),
-                onPressed: () {
-                  BlocProvider.of<VideoDirsCubit>(context).fetchVideoDirs();
-                },
+                child: contentPane(context),
               ),
             ],
           ),
-          Expanded(
-            child: fileListBuilder(),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  BlocConsumer<VideoDirsCubit, VideoDirsState> directoryListBuilder() {
-    return BlocConsumer<VideoDirsCubit, VideoDirsState>(
+  Widget wideScreen(context) {
+    return Row(
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints:
+                BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
+            child: videoPane(context),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              selectPane(context),
+              Expanded(
+                child: contentPane(context),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget videoPane(context) {
+    return AspectRatio(
+      aspectRatio: 4 / 3,
+      child: VideoScreen(),
+    );
+  }
+
+  Widget selectPane(context) {
+    return Wrap(
+      spacing: 10.0,
+      // runSpacing: 20.0,
+      children: [
+        directoryListBuilder(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+          child: ElevatedButton(
+            child: Text('Update'),
+            onPressed: () {
+              BlocProvider.of<VideoFilesCubit>(context)
+                  .updateVideoFiles(isDirty: true);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget contentPane(context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: fileListBuilder(),
+    );
+  }
+
+  BlocConsumer<VideoFilesCubit, VideoFilesState> directoryListBuilder() {
+    return BlocConsumer<VideoFilesCubit, VideoFilesState>(
       listenWhen: (previous, current) {
-        return true;
+        return false;
       },
-      listener: (context, state) {
-        // if (state.videoDirsResult.status ==
-        //     VideoDirsStatus.initial) {
-        //   context
-        //       .read<VideoDirsCubit>()
-        //       .filterCountryByString(filterString ?? '');
-        // }
-      },
+      listener: (context, state) {},
       buildWhen: (previous, current) {
-        return true;
+        if (current.videoFilesResult.status == VideoFilesStatus.success) {
+          return true;
+        }
+        return false;
       },
       builder: (context, state) {
-        if (state.videoDirsResult.status == VideoDirsStatus.success) {
-          var directoryList = state.videoDirsResult.availableVideoDirs;
+        print(
+            'Video directoryListBuilder: ${state.videoFilesResult.status.name}');
+        if (state.videoFilesResult.status == VideoFilesStatus.success) {
+          var directoryList = data.videoDirNames;
 
           return DropdownButton<String>(
-            value: BlocProvider.of<VideoDirsCubit>(context)
-                .getLastUsedSelectedVideoDir(),
+            value: state.videoFilesResult.selectedDirectory,
             onChanged: (String? value) {
-              // This is called when the user selects an item.
               setState(() {
-                BlocProvider.of<VideoDirsCubit>(context)
-                    .setLastUsedSelectedVideoDir(value!);
-                // dropdownValue = value!;
+                // selectedDirectory = value;
                 BlocProvider.of<VideoFilesCubit>(context)
-                    .fetchVideoFiles(value);
+                    .updateVideoFiles(directoryName: value);
               });
             },
-            items: directoryList.map<DropdownMenuItem<String>>((String value) {
+            items: directoryList
+                .map<DropdownMenuItem<String>>((String directoryName) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                value: directoryName,
+                child: Text(directoryName),
               );
             }).toList(),
           );
-        } else if (state.videoDirsResult.status == VideoDirsStatus.initial) {
+        } else if (state.videoFilesResult.status == VideoFilesStatus.initial) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.videoDirsResult.status == VideoDirsStatus.loading) {
+        } else if (state.videoFilesResult.status == VideoFilesStatus.loading) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.videoDirsResult.status == VideoDirsStatus.failure) {
-          return Center(child: Text(state.videoDirsResult.message));
+        } else if (state.videoFilesResult.status == VideoFilesStatus.failure) {
+          return Center(child: Text(state.videoFilesResult.message));
         } else {
           return const Placeholder();
         }
@@ -108,45 +171,44 @@ class _VideosWidgetState extends State<VideosWidget> {
   BlocConsumer<VideoFilesCubit, VideoFilesState> fileListBuilder() {
     return BlocConsumer<VideoFilesCubit, VideoFilesState>(
       listenWhen: (previous, current) {
-        return true;
+        return false;
       },
-      listener: (context, state) {
-        // if (state.videoDirsResult.status ==
-        //     FilesStatus.initial) {
-        //   context
-        //       .read<FilesCubit>()
-        //       .filterCountryByString(filterString ?? '');
-        // }
-      },
+      listener: (context, state) {},
       buildWhen: (previous, current) {
-        if (current.videoFilesResult.status ==
-            VideoFilesStatus.selectedVideoChanged) {
-          return false;
+        if (current.videoFilesResult.status == VideoFilesStatus.success) {
+          return true;
         }
-        return true;
+        return false;
       },
       builder: (context, state) {
+        print('Video fileListBuilder: ${state.videoFilesResult.status.name}');
         if (state.videoFilesResult.status == VideoFilesStatus.success) {
-          var fileList = state.videoFilesResult.availableVideoFiles;
+          var fileList = data.videoFileNames;
           return ListView.builder(
             itemCount: fileList.length,
-            itemBuilder: (context, index) => Card(
+            itemBuilder: (context, index) => Container(
               child: ListTile(
-                title: Text(fileList[index]),
-                // trailing: Text(fileList[index].countryCode),
-                trailing: Text(
-                  '${index + 1} (${fileList.length})',
-                  // '${fileList[index]}\n${index + 1} (${fileList.length})',
+                // selected:
+                //   state.videoFilesResult.selectedFile == fileList[index],
+                title: Text(
+                  fileList[index],
+                  style: state.videoFilesResult.selectedFile == fileList[index]
+                      ? TextStyle(fontWeight: FontWeight.bold)
+                      : TextStyle(fontWeight: FontWeight.normal),
+                ),
+                trailing: Wrap(
+                  spacing: 10.0,
+                  children: [
+                    Icon(Icons.download),
+                    Icon(Icons.delete),
+                    Text(
+                      '${index + 1} (${fileList.length})',
+                    ),
+                  ],
                 ),
                 onTap: () async {
                   BlocProvider.of<VideoFilesCubit>(context)
-                      .setLastUsedSelectedFile(fileList[index]);
-
-                  // var mediaUri = core.getFileDownloadUri(fileList[index]);
-                  // MyScreenState.newVideo(mediaUri);
-
-                  // await showDialog(
-                  //     context: context, builder: (_) => VideoDialog());
+                      .updateVideoFiles(fileName: fileList[index]);
                 },
               ),
             ),
@@ -165,29 +227,27 @@ class _VideosWidgetState extends State<VideosWidget> {
   }
 }
 
-class MyScreen extends StatefulWidget {
-  const MyScreen({super.key});
+class VideoScreen extends StatefulWidget {
+  const VideoScreen({super.key});
 
   @override
-  State<MyScreen> createState() => MyScreenState();
+  State<VideoScreen> createState() => VideoScreenState();
 }
 
-class MyScreenState extends State<MyScreen> {
+class VideoScreenState extends State<VideoScreen> {
   late final player = media_kit.Player();
   late final controller = media_kit_video.VideoController(player);
 
   @override
   void initState() {
+    print('Video initState.');
     super.initState();
-    // Play a [Media] or [Playlist].
-    // player.open(media_kit.Media(
-    //     'https://user-images.githubusercontent.com/28951144/229373695-22f88f13-d18f-4288-9bf1-c3e078d83722.mp4'));
-    // // player.open(media_kit.Media('http://wurb-aa-51c:8082/files/download?file_path=/home/wurb/wirc_recordings/wirc_2024-12-28/video_20241228T114248.mp4'));
     player.setRate(0.5);
   }
 
   @override
   void dispose() {
+    print('Video dispose.');
     player.dispose();
     super.dispose();
   }
@@ -195,36 +255,25 @@ class MyScreenState extends State<MyScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: BlocConsumer<VideoFilesCubit, VideoFilesState>(
+      child: BlocListener<VideoFilesCubit, VideoFilesState>(
         listenWhen: (previous, current) {
-          if (current.videoFilesResult.status ==
-              VideoFilesStatus.selectedVideoChanged) {
+          if (current.videoFilesResult.status == VideoFilesStatus.success) {
             return true;
           }
           return false;
         },
         listener: (context, state) {
-          var selectedFile = state.videoFilesResult.selectedFile;
-          var mediaUri = core.getVideoDownloadUri(selectedFile!);
+          var mediaUri = state.videoFilesResult.videoUri;
           // MyScreenState.newVideo(mediaUri);
           openNewVideo(mediaUri);
         },
-        buildWhen: (previous, current) {
-          if (current.videoFilesResult.status ==
-              VideoFilesStatus.selectedVideoChanged) {
-            return false;
-          }
-          return true;
-        },
-        builder: (context, state) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width,
-            // height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-            height: MediaQuery.of(context).size.width * 2.0 / 3.0,
-            // Use [Video] widget to display video output.
-            child: media_kit_video.Video(controller: controller),
-          );
-        },
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          // height: MediaQuery.of(context).size.width * 9.0 / 16.0,
+          height: MediaQuery.of(context).size.width * 2.0 / 3.0,
+          // Use [Video] widget to display video output.
+          child: media_kit_video.Video(controller: controller),
+        ),
       ),
     );
   }
