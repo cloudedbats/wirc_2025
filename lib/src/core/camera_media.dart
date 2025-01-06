@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 // import 'package:wirc_2025/src/core/core.dart' as core;
-import 'package:wirc_2025/src/data/data.dart' as data;
+import 'package:wirc_2025/src/data.dart' as data;
 
 Future<void> downloadDirectories({String media = 'video'}) async {
   // curl -X 'GET' \

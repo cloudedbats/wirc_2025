@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/core.dart' as core;
+import '../../core.dart' as core;
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({

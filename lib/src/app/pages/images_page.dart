@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wirc_2025/src/app/pages/main_page/cubit/image_files_cubit.dart';
-import 'package:wirc_2025/src/data/data.dart' as data;
+import 'package:wirc_2025/src/app/cubits.dart' as cubits;
+import 'package:wirc_2025/src/data.dart' as data;
 
 class ImagesWidget extends StatefulWidget {
   const ImagesWidget({
@@ -20,7 +20,8 @@ class _ImagesWidgetState extends State<ImagesWidget> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ImageFilesCubit>(context).updateImageFiles(isDirty: true);
+    BlocProvider.of<cubits.ImageFilesCubit>(context)
+        .updateImageFiles(isDirty: true);
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   BlocProvider.of<ImageFilesCubit>(context).updateImageFiles(isDirty: true);
     // });
@@ -102,7 +103,7 @@ class _ImagesWidgetState extends State<ImagesWidget> {
           child: ElevatedButton(
             child: Text('Update'),
             onPressed: () {
-              BlocProvider.of<ImageFilesCubit>(context)
+              BlocProvider.of<cubits.ImageFilesCubit>(context)
                   .updateImageFiles(isDirty: true);
             },
           ),
@@ -118,21 +119,22 @@ class _ImagesWidgetState extends State<ImagesWidget> {
     );
   }
 
-  BlocConsumer<ImageFilesCubit, ImageFilesState> showImage() {
-    return BlocConsumer<ImageFilesCubit, ImageFilesState>(
+  BlocConsumer<cubits.ImageFilesCubit, cubits.ImageFilesState> showImage() {
+    return BlocConsumer<cubits.ImageFilesCubit, cubits.ImageFilesState>(
       listenWhen: (previous, current) {
         return false;
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        if (current.imageFilesResult.status == ImageFilesStatus.success) {
+        if (current.imageFilesResult.status ==
+            cubits.ImageFilesStatus.success) {
           return true;
         }
         return false;
       },
       builder: (context, state) {
         print('Image showImage: ${state.imageFilesResult.status.name}');
-        if (state.imageFilesResult.status == ImageFilesStatus.success) {
+        if (state.imageFilesResult.status == cubits.ImageFilesStatus.success) {
           var imageUri = state.imageFilesResult.imageUri;
           if (imageUri == '') {
             return const Placeholder();
@@ -145,21 +147,24 @@ class _ImagesWidgetState extends State<ImagesWidget> {
     );
   }
 
-  BlocConsumer<ImageFilesCubit, ImageFilesState> directoryListBuilder() {
-    return BlocConsumer<ImageFilesCubit, ImageFilesState>(
+  BlocConsumer<cubits.ImageFilesCubit, cubits.ImageFilesState>
+      directoryListBuilder() {
+    return BlocConsumer<cubits.ImageFilesCubit, cubits.ImageFilesState>(
       listenWhen: (previous, current) {
         return false;
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        if (current.imageFilesResult.status == ImageFilesStatus.success) {
+        if (current.imageFilesResult.status ==
+            cubits.ImageFilesStatus.success) {
           return true;
         }
         return false;
       },
       builder: (context, state) {
-        print('Image directoryListBuilder: ${state.imageFilesResult.status.name}');
-        if (state.imageFilesResult.status == ImageFilesStatus.success) {
+        print(
+            'Image directoryListBuilder: ${state.imageFilesResult.status.name}');
+        if (state.imageFilesResult.status == cubits.ImageFilesStatus.success) {
           var directoryList = data.imageDirNames;
 
           return DropdownButton<String>(
@@ -167,7 +172,7 @@ class _ImagesWidgetState extends State<ImagesWidget> {
             onChanged: (String? value) {
               setState(() {
                 // selectedDirectory = value;
-                BlocProvider.of<ImageFilesCubit>(context)
+                BlocProvider.of<cubits.ImageFilesCubit>(context)
                     .updateImageFiles(directoryName: value);
               });
             },
@@ -179,11 +184,14 @@ class _ImagesWidgetState extends State<ImagesWidget> {
               );
             }).toList(),
           );
-        } else if (state.imageFilesResult.status == ImageFilesStatus.initial) {
+        } else if (state.imageFilesResult.status ==
+            cubits.ImageFilesStatus.initial) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.imageFilesResult.status == ImageFilesStatus.loading) {
+        } else if (state.imageFilesResult.status ==
+            cubits.ImageFilesStatus.loading) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.imageFilesResult.status == ImageFilesStatus.failure) {
+        } else if (state.imageFilesResult.status ==
+            cubits.ImageFilesStatus.failure) {
           return Center(child: Text(state.imageFilesResult.message));
         } else {
           return const Placeholder();
@@ -192,21 +200,23 @@ class _ImagesWidgetState extends State<ImagesWidget> {
     );
   }
 
-  BlocConsumer<ImageFilesCubit, ImageFilesState> fileListBuilder() {
-    return BlocConsumer<ImageFilesCubit, ImageFilesState>(
+  BlocConsumer<cubits.ImageFilesCubit, cubits.ImageFilesState>
+      fileListBuilder() {
+    return BlocConsumer<cubits.ImageFilesCubit, cubits.ImageFilesState>(
       listenWhen: (previous, current) {
         return false;
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        if (current.imageFilesResult.status == ImageFilesStatus.success) {
+        if (current.imageFilesResult.status ==
+            cubits.ImageFilesStatus.success) {
           return true;
         }
         return false;
       },
       builder: (context, state) {
         print('Image fileListBuilder: ${state.imageFilesResult.status.name}');
-        if (state.imageFilesResult.status == ImageFilesStatus.success) {
+        if (state.imageFilesResult.status == cubits.ImageFilesStatus.success) {
           var fileList = data.imageFileNames;
           return ListView.builder(
             itemCount: fileList.length,
@@ -226,22 +236,25 @@ class _ImagesWidgetState extends State<ImagesWidget> {
                     Icon(Icons.download),
                     Icon(Icons.delete),
                     Text(
-                      '${index + 1} (${fileList.length})',
+                      '${index + 1}/${fileList.length}',
                     ),
                   ],
                 ),
                 onTap: () async {
-                  BlocProvider.of<ImageFilesCubit>(context)
+                  BlocProvider.of<cubits.ImageFilesCubit>(context)
                       .updateImageFiles(fileName: fileList[index]);
                 },
               ),
             ),
           );
-        } else if (state.imageFilesResult.status == ImageFilesStatus.initial) {
+        } else if (state.imageFilesResult.status ==
+            cubits.ImageFilesStatus.initial) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.imageFilesResult.status == ImageFilesStatus.loading) {
+        } else if (state.imageFilesResult.status ==
+            cubits.ImageFilesStatus.loading) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.imageFilesResult.status == ImageFilesStatus.failure) {
+        } else if (state.imageFilesResult.status ==
+            cubits.ImageFilesStatus.failure) {
           return Center(child: Text(state.imageFilesResult.message));
         } else {
           return const Placeholder();

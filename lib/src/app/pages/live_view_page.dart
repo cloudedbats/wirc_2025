@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mjpeg/flutter_mjpeg.dart';
-import '../../../core/core.dart' as core;
+import '../../core.dart' as core;
 
 class LiveViewWidget extends StatefulWidget {
   const LiveViewWidget({

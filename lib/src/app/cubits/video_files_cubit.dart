@@ -1,39 +1,39 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wirc_2025/src/core/core.dart' as core;
-import 'package:wirc_2025/src/data/data.dart' as data;
+import 'package:wirc_2025/src/core.dart' as core;
+import 'package:wirc_2025/src/data.dart' as data;
 
-part 'image_files_state.dart';
+part 'video_files_state.dart';
 
-enum ImageFilesStatus {
+enum VideoFilesStatus {
   initial,
   loading,
   success,
   failure,
 }
 
-class ImageFilesResult {
-  ImageFilesStatus status = ImageFilesStatus.initial;
+class VideoFilesResult {
+  VideoFilesStatus status = VideoFilesStatus.initial;
   String? selectedDirectory;
   String? selectedFile;
-  String imageUri = '';
+  String videoUri = '';
   String message = '';
 
-  ImageFilesResult({
-    this.status = ImageFilesStatus.initial,
+  VideoFilesResult({
+    this.status = VideoFilesStatus.initial,
     this.selectedDirectory,
     this.selectedFile,
-    this.imageUri = '',
+    this.videoUri = '',
     this.message = '',
   });
 }
 
-class ImageFilesCubit extends Cubit<ImageFilesState> {
-  ImageFilesCubit() : super(ImageFilesState(ImageFilesResult()));
+class VideoFilesCubit extends Cubit<VideoFilesState> {
+  VideoFilesCubit() : super(VideoFilesState(VideoFilesResult()));
 
   String selectedDirectory = '';
   String selectedFile = '';
-  String imageUri = '';
+  String videoUri = '';
 
   String? getSelectedDirectory() {
     if (selectedDirectory == '') {
@@ -49,29 +49,29 @@ class ImageFilesCubit extends Cubit<ImageFilesState> {
     return selectedFile;
   }
 
-  Future<void> loadInitialImageFiles() async {
+  Future<void> loadInitialVideoFiles() async {
     // Load stored values.
-    final directory = await _loadSelectedImageDirectory();
+    final directory = await _loadSelectedVideoDirectory();
     selectedDirectory = directory;
-    final file = await _loadSelectedImageFile();
+    final file = await _loadSelectedVideoFile();
     selectedFile = file;
     // Inform consumers.
-    late ImageFilesResult result;
-    result = ImageFilesResult();
-    result.status = ImageFilesStatus.initial;
-    emit(ImageFilesState(result));
+    late VideoFilesResult result;
+    result = VideoFilesResult();
+    result.status = VideoFilesStatus.initial;
+    emit(VideoFilesState(result));
   }
 
-  Future<void> updateImageFiles({
+  Future<void> updateVideoFiles({
     String? directoryName = 'EMPTY',
     String? fileName = 'EMPTY',
     bool isDirty = false,
   }) async {
     // Inform consumers.
-    late ImageFilesResult result;
-    result = ImageFilesResult();
-    result.status = ImageFilesStatus.loading;
-    emit(ImageFilesState(result));
+    late VideoFilesResult result;
+    result = VideoFilesResult();
+    result.status = VideoFilesStatus.loading;
+    emit(VideoFilesState(result));
 
     // Directories.
     String previousDirectory = selectedDirectory;
@@ -85,22 +85,22 @@ class ImageFilesCubit extends Cubit<ImageFilesState> {
       isDirty = true;
       try {
         await core.downloadDirectories(
-          media: 'image',
+          media: 'video',
         );
         // Check if selectedDictionary is in result list.
-        if (!data.imageDirNames.contains(selectedDirectory)) {
+        if (!data.videoDirNames.contains(selectedDirectory)) {
           _setSelectedDirectory('');
-          if (data.imageDirNames.isNotEmpty) {
+          if (data.videoDirNames.isNotEmpty) {
             // Select first item.
-            _setSelectedDirectory(data.imageDirNames[0]);
+            _setSelectedDirectory(data.videoDirNames[0]);
           }
         }
       } on Exception catch (e) {
         // Inform consumers.
-        result = ImageFilesResult();
-        result.status = ImageFilesStatus.failure;
-        result.message = 'Exception: Images directories: $e';
-        emit(ImageFilesState(result));
+        result = VideoFilesResult();
+        result.status = VideoFilesStatus.failure;
+        result.message = 'Exception: Videos directories: $e';
+        emit(VideoFilesState(result));
         return;
       }
     }
@@ -116,45 +116,45 @@ class ImageFilesCubit extends Cubit<ImageFilesState> {
         try {
           await core.downloadFiles(
             selectedDirectory,
-            media: 'image',
+            media: 'video',
           );
           // Check if selectedFile is in result list.
-          if (!data.imageFileNames.contains(selectedFile)) {
+          if (!data.videoFileNames.contains(selectedFile)) {
             _setSelectedFile('');
-            if (data.imageFileNames.isNotEmpty) {
+            if (data.videoFileNames.isNotEmpty) {
               // Select first item.
-              _setSelectedFile(data.imageFileNames[0]);
+              _setSelectedFile(data.videoFileNames[0]);
             }
           }
         } on Exception catch (e) {
           // Inform consumers.
-          result = ImageFilesResult();
-          result.status = ImageFilesStatus.failure;
-          result.message = 'Exception: Images files: $e';
-          emit(ImageFilesState(result));
+          result = VideoFilesResult();
+          result.status = VideoFilesStatus.failure;
+          result.message = 'Exception: Videos files: $e';
+          emit(VideoFilesState(result));
           return;
         }
       }
     } else {
       _setSelectedFile('');
-      data.clearImageFiles();
+      data.clearVideoFiles();
     }
 
-    // Image.
+    // Video.
     if (selectedFile == '') {
-      imageUri = '';
+      videoUri = '';
     } else {
-      imageUri = core.getImageDownloadUri(selectedFile);
+      videoUri = core.getVideoDownloadUri(selectedFile);
     }
 
     // Done. Inform consumers.
-    result = ImageFilesResult();
-    result.status = ImageFilesStatus.success;
+    result = VideoFilesResult();
+    result.status = VideoFilesStatus.success;
     result.selectedDirectory = getSelectedDirectory();
     result.selectedFile = getSelectedFile();
-    result.imageUri = imageUri;
+    result.videoUri = videoUri;
 
-    emit(ImageFilesState(result));
+    emit(VideoFilesState(result));
   }
 
   _setSelectedDirectory(String? directory) {
@@ -164,17 +164,17 @@ class ImageFilesCubit extends Cubit<ImageFilesState> {
       selectedDirectory = directory;
     }
     // Keep selectedDirectory for next app start.
-    _storeSelectedImageDirectory(selectedDirectory);
+    _storeSelectedVideoDirectory(selectedDirectory);
   }
 
-  Future<void> _storeSelectedImageDirectory(String directory) async {
+  Future<void> _storeSelectedVideoDirectory(String directory) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedImageDirectory', directory);
+    await prefs.setString('selectedVideoDirectory', directory);
   }
 
-  Future<String> _loadSelectedImageDirectory() async {
+  Future<String> _loadSelectedVideoDirectory() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selectedImageDirectory') ?? '';
+    return prefs.getString('selectedVideoDirectory') ?? '';
   }
 
   _setSelectedFile(String? file) {
@@ -184,16 +184,16 @@ class ImageFilesCubit extends Cubit<ImageFilesState> {
       selectedFile = file;
     }
     // Keep selectedFile for next app start.
-    _storeSelectedImageFile(selectedFile);
+    _storeSelectedVideoFile(selectedFile);
   }
 
-  Future<void> _storeSelectedImageFile(String file) async {
+  Future<void> _storeSelectedVideoFile(String file) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedImageFile', file);
+    await prefs.setString('selectedVideoFile', file);
   }
 
-  Future<String> _loadSelectedImageFile() async {
+  Future<String> _loadSelectedVideoFile() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selectedImageFile') ?? '';
+    return prefs.getString('selectedVideoFile') ?? '';
   }
 }

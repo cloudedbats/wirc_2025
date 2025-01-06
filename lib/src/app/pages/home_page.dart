@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '../../pages.dart';
-import '../main_page/cubit/theme_cubit.dart' as theme_cubit;
+import 'package:wirc_2025/src/app/pages.dart';
+import 'package:wirc_2025/src/app/cubits.dart' as cubits;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
           forceMaterialTransparency: true,
           title: const Center(
             child: Text(
-              'CloudedBats WIRC-2025',
+              'CloudedBats WIRC',
               style: TextStyle(
                 fontSize: 16,
               ),
@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                   onChanged: (bool value) {
                     setState(() {
                       context
-                          .read<theme_cubit.ThemeCubit>()
+                          .read<cubits.ThemeCubit>()
                           .toggleTheme(!isDarkMode);
                     });
                   },
@@ -135,7 +135,7 @@ class _HomePageState extends State<HomePage> {
           forceMaterialTransparency: true,
           title: const Center(
             child: Text(
-              'CloudedBats WIRC-2025',
+              'CloudedBats WIRC',
               style: TextStyle(
                 fontSize: 18,
               ),
@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                   onChanged: (bool value) {
                     setState(() {
                       context
-                          .read<theme_cubit.ThemeCubit>()
+                          .read<cubits.ThemeCubit>()
                           .toggleTheme(!isDarkMode);
                     });
                   },

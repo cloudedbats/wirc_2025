@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:media_kit/media_kit.dart' as media_kit;
 import 'package:media_kit_video/media_kit_video.dart' as media_kit_video;
-import 'package:wirc_2025/src/app/pages/main_page/cubit/video_files_cubit.dart';
-import 'package:wirc_2025/src/data/data.dart' as data;
+import 'package:wirc_2025/src/app/cubits.dart' as cubits;
+import 'package:wirc_2025/src/data.dart' as data;
 
 class VideosWidget extends StatefulWidget {
   const VideosWidget({
@@ -24,7 +24,8 @@ class _VideosWidgetState extends State<VideosWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlocProvider.of<VideoFilesCubit>(context).updateVideoFiles(isDirty: true);
+      BlocProvider.of<cubits.VideoFilesCubit>(context)
+          .updateVideoFiles(isDirty: true);
     });
   }
 
@@ -104,7 +105,7 @@ class _VideosWidgetState extends State<VideosWidget> {
           child: ElevatedButton(
             child: Text('Update'),
             onPressed: () {
-              BlocProvider.of<VideoFilesCubit>(context)
+              BlocProvider.of<cubits.VideoFilesCubit>(context)
                   .updateVideoFiles(isDirty: true);
             },
           ),
@@ -120,14 +121,16 @@ class _VideosWidgetState extends State<VideosWidget> {
     );
   }
 
-  BlocConsumer<VideoFilesCubit, VideoFilesState> directoryListBuilder() {
-    return BlocConsumer<VideoFilesCubit, VideoFilesState>(
+  BlocConsumer<cubits.VideoFilesCubit, cubits.VideoFilesState>
+      directoryListBuilder() {
+    return BlocConsumer<cubits.VideoFilesCubit, cubits.VideoFilesState>(
       listenWhen: (previous, current) {
         return false;
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        if (current.videoFilesResult.status == VideoFilesStatus.success) {
+        if (current.videoFilesResult.status ==
+            cubits.VideoFilesStatus.success) {
           return true;
         }
         return false;
@@ -135,7 +138,7 @@ class _VideosWidgetState extends State<VideosWidget> {
       builder: (context, state) {
         print(
             'Video directoryListBuilder: ${state.videoFilesResult.status.name}');
-        if (state.videoFilesResult.status == VideoFilesStatus.success) {
+        if (state.videoFilesResult.status == cubits.VideoFilesStatus.success) {
           var directoryList = data.videoDirNames;
 
           return DropdownButton<String>(
@@ -143,7 +146,7 @@ class _VideosWidgetState extends State<VideosWidget> {
             onChanged: (String? value) {
               setState(() {
                 // selectedDirectory = value;
-                BlocProvider.of<VideoFilesCubit>(context)
+                BlocProvider.of<cubits.VideoFilesCubit>(context)
                     .updateVideoFiles(directoryName: value);
               });
             },
@@ -155,11 +158,14 @@ class _VideosWidgetState extends State<VideosWidget> {
               );
             }).toList(),
           );
-        } else if (state.videoFilesResult.status == VideoFilesStatus.initial) {
+        } else if (state.videoFilesResult.status ==
+            cubits.VideoFilesStatus.initial) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.videoFilesResult.status == VideoFilesStatus.loading) {
+        } else if (state.videoFilesResult.status ==
+            cubits.VideoFilesStatus.loading) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.videoFilesResult.status == VideoFilesStatus.failure) {
+        } else if (state.videoFilesResult.status ==
+            cubits.VideoFilesStatus.failure) {
           return Center(child: Text(state.videoFilesResult.message));
         } else {
           return const Placeholder();
@@ -168,21 +174,23 @@ class _VideosWidgetState extends State<VideosWidget> {
     );
   }
 
-  BlocConsumer<VideoFilesCubit, VideoFilesState> fileListBuilder() {
-    return BlocConsumer<VideoFilesCubit, VideoFilesState>(
+  BlocConsumer<cubits.VideoFilesCubit, cubits.VideoFilesState>
+      fileListBuilder() {
+    return BlocConsumer<cubits.VideoFilesCubit, cubits.VideoFilesState>(
       listenWhen: (previous, current) {
         return false;
       },
       listener: (context, state) {},
       buildWhen: (previous, current) {
-        if (current.videoFilesResult.status == VideoFilesStatus.success) {
+        if (current.videoFilesResult.status ==
+            cubits.VideoFilesStatus.success) {
           return true;
         }
         return false;
       },
       builder: (context, state) {
         print('Video fileListBuilder: ${state.videoFilesResult.status.name}');
-        if (state.videoFilesResult.status == VideoFilesStatus.success) {
+        if (state.videoFilesResult.status == cubits.VideoFilesStatus.success) {
           var fileList = data.videoFileNames;
           return ListView.builder(
             itemCount: fileList.length,
@@ -202,22 +210,25 @@ class _VideosWidgetState extends State<VideosWidget> {
                     Icon(Icons.download),
                     Icon(Icons.delete),
                     Text(
-                      '${index + 1} (${fileList.length})',
+                      ' ${index + 1}/${fileList.length}',
                     ),
                   ],
                 ),
                 onTap: () async {
-                  BlocProvider.of<VideoFilesCubit>(context)
+                  BlocProvider.of<cubits.VideoFilesCubit>(context)
                       .updateVideoFiles(fileName: fileList[index]);
                 },
               ),
             ),
           );
-        } else if (state.videoFilesResult.status == VideoFilesStatus.initial) {
+        } else if (state.videoFilesResult.status ==
+            cubits.VideoFilesStatus.initial) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.videoFilesResult.status == VideoFilesStatus.loading) {
+        } else if (state.videoFilesResult.status ==
+            cubits.VideoFilesStatus.loading) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state.videoFilesResult.status == VideoFilesStatus.failure) {
+        } else if (state.videoFilesResult.status ==
+            cubits.VideoFilesStatus.failure) {
           return Center(child: Text(state.videoFilesResult.message));
         } else {
           return const Placeholder();
@@ -255,9 +266,10 @@ class VideoScreenState extends State<VideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: BlocListener<VideoFilesCubit, VideoFilesState>(
+      child: BlocListener<cubits.VideoFilesCubit, cubits.VideoFilesState>(
         listenWhen: (previous, current) {
-          if (current.videoFilesResult.status == VideoFilesStatus.success) {
+          if (current.videoFilesResult.status ==
+              cubits.VideoFilesStatus.success) {
             return true;
           }
           return false;

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/core.dart' as core;
+import 'package:wirc_2025/src/core.dart' as core;
 
 part 'client_settings_state.dart';
 

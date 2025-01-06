@@ -1,7 +1,7 @@
 // import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 // import 'package:wirc_2025/src/core/core.dart' as core;
-import 'package:wirc_2025/src/data/data.dart' as data;
+import 'package:wirc_2025/src/data.dart' as data;
 
 startCamera() async {
   await cameraCommands('start');
